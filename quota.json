@@ -1,0 +1,16 @@
+    {
+      "id": "demo-quota",
+      "kind": "ResourceQuota",
+      "apiVersion": "v1beta1",
+      "spec": {
+        "hard": {
+          "memory": "5120000000",
+          "cpu": "10",
+          "pods": "100",
+          "services": "100",
+          "replicationcontrollers":"100",
+          "resourcequotas":"1"
+        }
+      }
+    }
+
