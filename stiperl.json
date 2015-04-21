@@ -1,0 +1,151 @@
+{
+    "apiVersion": "v1beta1",
+    "creationTimestamp": null,
+    "items": [
+        {
+            "apiVersion": "v1beta1",
+            "containerPort": 8080,
+            "creationTimestamp": null,
+            "id": "stiperl",
+            "kind": "Service",
+            "port": 8080,
+            "selector": {
+                "deploymentconfig": "stiperl"
+            }
+        },
+        {
+            "apiVersion": "v1beta1",
+            "kind": "ImageRepository",
+            "metadata": {
+                "creationTimestamp": null,
+                "name": "base-centos7"
+            },
+            "status": {
+                "dockerImageRepository": ""
+            }
+        },
+        {
+            "apiVersion": "v1beta1",
+            "kind": "ImageRepository",
+            "metadata": {
+                "creationTimestamp": null,
+                "name": "stiperl"
+            },
+            "status": {
+                "dockerImageRepository": ""
+            }
+        },
+        {
+            "apiVersion": "v1beta1",
+            "kind": "BuildConfig",
+            "metadata": {
+                "creationTimestamp": null,
+                "name": "stiperl"
+            },
+            "parameters": {
+                "output": {
+                    "to": {
+                        "name": "stiperl"
+                    }
+                },
+                "source": {
+                    "git": {
+                        "ref": "master",
+                        "uri": "https://github.com/openshift/sti-perl.git"
+                    },
+                    "contextDir": "5.16/test", 
+                    "type": "Git"
+                },
+		"strategy": {
+                    "stiStrategy": {
+                        "builderImage": "openshift/perl-516-centos7",
+                        "clean": true,
+                        "image": "openshift/perl-516-centos7"
+                    },
+                    "type": "STI"
+                }
+            },
+            "triggers": [
+                {
+                    "github": {
+                        "secret": "3ZiO2tmGdsS4s2PxTKib"
+                    },
+                    "type": "github"
+                },
+                {
+                    "generic": {
+                        "secret": "pd14GjE9e59nWtOIDvye"
+                    },
+                    "type": "generic"
+                }
+            ]
+        },
+        {
+            "apiVersion": "v1beta1",
+            "kind": "DeploymentConfig",
+            "metadata": {
+                "creationTimestamp": null,
+                "name": "stiperl"
+            },
+            "template": {
+                "controllerTemplate": {
+                    "podTemplate": {
+                        "desiredState": {
+                            "manifest": {
+                                "containers": [
+                                    {
+                                        "capabilities": {},
+                                        "image": "stiperl:latest",
+                                        "imagePullPolicy": "",
+                                        "name": "stiperl",
+                                        "ports": [
+                                            {
+                                                "containerPort": 8080,
+                                                "name": "stiperl-tcp-8080",
+                                                "protocol": "TCP"
+                                            }
+                                        ],
+                                        "resources": {}
+                                    }
+                                ],
+                                "id": "",
+                                "restartPolicy": {},
+                                "version": "v1beta2",
+                                "volumes": null
+                            }
+                        },
+                        "labels": {
+                            "deploymentconfig": "stiperl"
+                        }
+                    },
+                    "replicaSelector": {
+                        "deploymentconfig": "stiperl"
+                    },
+                    "replicas": 1
+                },
+                "strategy": {
+                    "type": "Recreate"
+                }
+            },
+            "triggers": [
+                {
+                    "type": "ConfigChange"
+                },
+                {
+                    "imageChangeParams": {
+                        "automatic": true,
+                        "containerNames": [
+                            "stiperl"
+                        ],
+                        "from": {
+                            "name": "stiperl"
+                        },
+                        "tag": "latest"
+                    },
+                    "type": "ImageChange"
+                }
+            ]
+        }
+    ],
+    "kind": "List"
+}

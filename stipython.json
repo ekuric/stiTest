@@ -1,0 +1,151 @@
+{
+    "apiVersion": "v1beta1",
+    "creationTimestamp": null,
+    "items": [
+        {
+            "apiVersion": "v1beta1",
+            "containerPort": 8080,
+            "creationTimestamp": null,
+            "id": "stipython",
+            "kind": "Service",
+            "port": 8080,
+            "selector": {
+                "deploymentconfig": "stipython"
+            }
+        },
+        {
+            "apiVersion": "v1beta1",
+            "kind": "ImageRepository",
+            "metadata": {
+                "creationTimestamp": null,
+                "name": "python-33-centos7"
+            },
+            "status": {
+                "dockerImageRepository": ""
+            }
+        },
+        {
+            "apiVersion": "v1beta1",
+            "kind": "ImageRepository",
+            "metadata": {
+                "creationTimestamp": null,
+                "name": "stipython"
+            },
+            "status": {
+                "dockerImageRepository": ""
+            }
+        },
+        {
+            "apiVersion": "v1beta1",
+            "kind": "BuildConfig",
+            "metadata": {
+                "creationTimestamp": null,
+                "name": "stipython"
+            },
+            "parameters": {
+                "output": {
+                    "to": {
+                        "name": "stipython"
+                    }
+                },
+                "source": {
+                    "git": {
+                        "ref": "master",
+                        "uri": "https://github.com/openshift/sti-python"
+                    },
+                    "type": "Git",
+		    "contextDir": "3.3/test/standalone-test-app"
+                },
+		"strategy": {
+                    "stiStrategy": {
+                        "builderImage": "openshift/python-33-centos7",
+                        "clean": true,
+                        "image": "openshift/python-33-centos7"
+                    },
+                    "type": "STI"
+                }
+            },
+            "triggers": [
+                {
+                    "github": {
+                        "secret": "QVopha_WZyPCI0bEFMYl"
+                    },
+                    "type": "github"
+                },
+                {
+                    "generic": {
+                        "secret": "FUHvFjCzuf9TosemKgRi"
+                    },
+                    "type": "generic"
+                }
+            ]
+        },
+        {
+            "apiVersion": "v1beta1",
+            "kind": "DeploymentConfig",
+            "metadata": {
+                "creationTimestamp": null,
+                "name": "stipython"
+            },
+            "template": {
+                "controllerTemplate": {
+                    "podTemplate": {
+                        "desiredState": {
+                            "manifest": {
+                                "containers": [
+                                    {
+                                        "capabilities": {},
+                                        "image": "stipython:latest",
+                                        "imagePullPolicy": "",
+                                        "name": "stipython",
+                                        "ports": [
+                                            {
+                                                "containerPort": 8080,
+                                                "name": "stipython-tcp-8080",
+                                                "protocol": "TCP"
+                                            }
+                                        ],
+                                        "resources": {}
+                                    }
+                                ],
+                                "id": "",
+                                "restartPolicy": {},
+                                "version": "v1beta2",
+                                "volumes": null
+                            }
+                        },
+                        "labels": {
+                            "deploymentconfig": "stipython"
+                        }
+                    },
+                    "replicaSelector": {
+                        "deploymentconfig": "stipython"
+                    },
+                    "replicas": 1
+                },
+                "strategy": {
+                    "type": "Recreate"
+                }
+            },
+            "triggers": [
+                {
+                    "type": "ConfigChange"
+                },
+                {
+                    "imageChangeParams": {
+                        "automatic": true,
+                        "containerNames": [
+                            "stipython"
+                        ],
+                        "from": {
+                            "name": "stipython"
+                        },
+                        "tag": "latest"
+                    },
+                    "type": "ImageChange"
+                }
+            ]
+        }
+    ],
+    "kind": "List"
+}

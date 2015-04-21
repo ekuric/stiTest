@@ -1,0 +1,150 @@
+{
+    "apiVersion": "v1beta1",
+    "creationTimestamp": null,
+    "items": [
+        {
+            "apiVersion": "v1beta1",
+            "containerPort": 8080,
+            "creationTimestamp": null,
+            "id": "sin",
+            "kind": "Service",
+            "port": 8080,
+            "selector": {
+                "deploymentconfig": "sin"
+            }
+        },
+        {
+            "apiVersion": "v1beta1",
+            "kind": "ImageRepository",
+            "metadata": {
+                "creationTimestamp": null,
+                "name": "ruby-20-centos7"
+            },
+            "status": {
+                "dockerImageRepository": ""
+            }
+        },
+        {
+            "apiVersion": "v1beta1",
+            "kind": "ImageRepository",
+            "metadata": {
+                "creationTimestamp": null,
+                "name": "sin"
+            },
+            "status": {
+                "dockerImageRepository": ""
+            }
+        },
+        {
+            "apiVersion": "v1beta1",
+            "kind": "BuildConfig",
+            "metadata": {
+                "creationTimestamp": null,
+                "name": "sin"
+            },
+            "parameters": {
+                "output": {
+                    "to": {
+                        "name": "sin"
+                    }
+                },
+                "source": {
+                    "git": {
+                        "ref": "beta2",
+                        "uri": "https://github.com/openshift/simple-openshift-sinatra-sti.git"
+                    },
+                    "type": "Git"
+                },
+                "strategy": {
+                    "stiStrategy": {
+                        "builderImage": "openshift/ruby-20-centos7",
+                        "clean": true,
+                        "image": "openshift/ruby-20-centos7"
+                    },
+                    "type": "STI"
+                }
+            },
+            "triggers": [
+                {
+                    "github": {
+                        "secret": "0c3H5VnNZKkjKfGzsFyv"
+                    },
+                    "type": "github"
+                },
+                {
+                    "generic": {
+                        "secret": "PnGRMhfGhDdP6-v69FOF"
+                    },
+                    "type": "generic"
+                }
+            ]
+        },
+        {
+            "apiVersion": "v1beta1",
+            "kind": "DeploymentConfig",
+            "metadata": {
+                "creationTimestamp": null,
+                "name": "sin"
+            },
+            "template": {
+                "controllerTemplate": {
+                    "podTemplate": {
+                        "desiredState": {
+                            "manifest": {
+                                "containers": [
+                                    {
+                                        "capabilities": {},
+                                        "image": "sin:latest",
+                                        "imagePullPolicy": "",
+                                        "name": "sin",
+                                        "ports": [
+                                            {
+                                                "containerPort": 8080,
+                                                "name": "sin-tcp-8080",
+                                                "protocol": "TCP"
+                                            }
+                                        ],
+                                        "resources": {}
+                                    }
+                                ],
+                                "id": "",
+                                "restartPolicy": {},
+                                "version": "v1beta2",
+                                "volumes": null
+                            }
+                        },
+                        "labels": {
+                            "deploymentconfig": "sin"
+                        }
+                    },
+                    "replicaSelector": {
+                        "deploymentconfig": "sin"
+                    },
+                    "replicas": 1
+                },
+                "strategy": {
+                    "type": "Recreate"
+                }
+            },
+            "triggers": [
+                {
+                    "type": "ConfigChange"
+                },
+                {
+                    "imageChangeParams": {
+                        "automatic": true,
+                        "containerNames": [
+                            "sin"
+                        ],
+                        "from": {
+                            "name": "sin"
+                        },
+                        "tag": "latest"
+                    },
+                    "type": "ImageChange"
+                }
+            ]
+        }
+    ],
+    "kind": "List"
+}

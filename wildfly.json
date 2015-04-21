@@ -1,0 +1,171 @@
+{
+    "apiVersion": "v1beta1",
+    "creationTimestamp": null,
+    "items": [
+        {
+            "apiVersion": "v1beta1",
+            "containerPort": 7600,
+            "creationTimestamp": null,
+            "id": "wildfly",
+            "kind": "Service",
+            "port": 7600,
+            "selector": {
+                "deploymentconfig": "wildfly"
+            }
+        },
+        {
+            "apiVersion": "v1beta1",
+            "kind": "ImageRepository",
+            "metadata": {
+                "creationTimestamp": null,
+                "name": "wildfly-8-centos"
+            },
+            "status": {
+                "dockerImageRepository": ""
+            }
+        },
+        {
+            "apiVersion": "v1beta1",
+            "kind": "ImageRepository",
+            "metadata": {
+                "creationTimestamp": null,
+                "name": "wildfly"
+            },
+            "status": {
+                "dockerImageRepository": ""
+            }
+        },
+        {
+            "apiVersion": "v1beta1",
+            "kind": "BuildConfig",
+            "metadata": {
+                "creationTimestamp": null,
+                "name": "wildfly"
+            },
+            "parameters": {
+                "output": {
+                    "to": {
+                        "name": "wildfly"
+                    }
+                },
+                "source": {
+                    "git": {
+                        "ref": "master",
+                        "uri": "https://github.com/openshift/wildfly-8-centos"
+                    },
+                    "type": "Git",
+	            "contextDir":"test/test-app"
+                },
+		"strategy": {
+                     "stiStrategy": {
+                        "builderImage": "openshift/wildfly-8-centos",
+                        "clean": true,
+                        "image": "openshift/wildfly-8-centos"
+                     },
+                    "type": "STI"
+                }
+            },
+            "triggers": [
+                {
+                    "github": {
+                        "secret": "5F_y2sUtuHUG3K7cSYsc"
+                    },
+                    "type": "github"
+                },
+                {
+                    "generic": {
+                        "secret": "TNBwnwpmpaQicbH1vP8r"
+                    },
+                    "type": "generic"
+                }
+            ]
+        },
+        {
+            "apiVersion": "v1beta1",
+            "kind": "DeploymentConfig",
+            "metadata": {
+                "creationTimestamp": null,
+                "name": "wildfly"
+            },
+            "template": {
+                "controllerTemplate": {
+                    "podTemplate": {
+                        "desiredState": {
+                            "manifest": {
+                                "containers": [
+                                    {
+                                        "capabilities": {},
+                                        "image": "wildfly:latest",
+                                        "imagePullPolicy": "",
+                                        "name": "wildfly",
+                                        "ports": [
+                                            {
+                                                "containerPort": 7600,
+                                                "name": "wildfly-tcp-7600",
+                                                "protocol": "TCP"
+                                            },
+                                            {
+                                                "containerPort": 8080,
+                                                "name": "wildfly-tcp-8080",
+                                                "protocol": "TCP"
+                                            },
+                                            {
+                                                "containerPort": 8787,
+                                                "name": "wildfly-tcp-8787",
+                                                "protocol": "TCP"
+                                            },
+                                            {
+                                                "containerPort": 9990,
+                                                "name": "wildfly-tcp-9990",
+                                                "protocol": "TCP"
+                                            },
+                                            {
+                                                "containerPort": 9999,
+                                                "name": "wildfly-tcp-9999",
+                                                "protocol": "TCP"
+                                            }
+                                        ],
+                                        "resources": {}
+                                    }
+                                ],
+                                "id": "",
+                                "restartPolicy": {},
+                                "version": "v1beta2",
+                                "volumes": null
+                            }
+                        },
+                        "labels": {
+                            "deploymentconfig": "wildfly"
+                        }
+                    },
+                    "replicaSelector": {
+                        "deploymentconfig": "wildfly"
+                    },
+                    "replicas": 1
+                },
+                "strategy": {
+                    "type": "Recreate"
+                }
+            },
+            "triggers": [
+                {
+                    "type": "ConfigChange"
+                },
+                {
+                    "imageChangeParams": {
+                        "automatic": true,
+                        "containerNames": [
+                            "wildfly"
+                        ],
+                        "from": {
+                            "name": "wildfly"
+                        },
+                        "tag": "latest"
+                    },
+                    "type": "ImageChange"
+                }
+            ]
+        }
+    ],
+    "kind": "List"
+}
